@@ -3,18 +3,13 @@
 namespace DesafioJP.ConsoleApp
 {
     internal class Program
-    { 
+    {
         // 0 nome 1 preço 2 nº série 3 data fabricação 4 fabricante;
-        static string[][] equipamento = new string[5][]{ new string[1000], new string[1000], 
-            new string[1000], new string[1000], new string[1000]};
-
-        static string[][] registro = new string[4][]{ new string[1000], new string[1000], 
-            new string[1000], new string[1000]};
-        static int registrados = 0;
+        // titulo 0 descrição 1 equipamento 2 data 3
         static int menuEquipamento()
         {
             Console.WriteLine("Digite 1 para registrar um equipamento\nDigite 2 para visualizar um" +
-            "equipamento\nDigite 3 para editar um equipamento\nDigite 4 para excluir um equipamento ");            
+            " equipamento\nDigite 3 para editar um equipamento\nDigite 4 para excluir um equipamento ");            
             int.TryParse(Console.ReadLine(), out int comando);
             
             if (comando == 1 || comando == 2 || comando == 3 || comando == 4)
@@ -35,8 +30,10 @@ namespace DesafioJP.ConsoleApp
             }
             return -1;
         }
-        static bool registrarEquipamento(ref string[][] equipamento, ref int contador)
-        {   if (contador < 1000)
+
+        #region equipamento
+        static bool registrarEquipamento(ref string[][] equipamento, ref int registrados)
+        {   if (registrados < 1000)
             {
                 string nome;
 
@@ -51,18 +48,20 @@ namespace DesafioJP.ConsoleApp
                     }
                     break;
                 }
-                equipamento[contador][0] = nome;
+                equipamento[registrados][0] = nome;
                 Console.WriteLine("Digite o preço do equipamento : ");
-                equipamento[contador][1] = Console.ReadLine();
+                equipamento[registrados][1] = Console.ReadLine();
                 Console.WriteLine("Digite o número de série : ");
-                equipamento[contador][2] = Console.ReadLine();
+                equipamento[registrados][2] = Console.ReadLine();
                 Console.WriteLine("Digite a data de fabricação : ");
-                equipamento[contador][3] = Console.ReadLine();
+                equipamento[registrados][3] = Console.ReadLine();
                 Console.WriteLine("Digite o nome da fabricante : ");
-                equipamento[contador][4] = Console.ReadLine();
-                contador++;
+                equipamento[registrados][4] = Console.ReadLine();
+                registrados++;
+                Console.WriteLine("Item registrado com Sucesso!!\n");
                 return true;
             }
+            Console.WriteLine("ERRO!!!\tO array atingiu o tamanho máximo!\n");
             return false;
         }
         static void visualizarEquipamento(ref string[][] equipamento, ref int registrados)
@@ -73,7 +72,7 @@ namespace DesafioJP.ConsoleApp
                 equipamento[i][0], equipamento[i][2], equipamento[i][4]);
             }
         }        
-        static void editarEquipamento(ref string[][] equipamento)
+        static bool editarEquipamento(ref string[][] equipamento, ref int registrados)
         {
             Console.WriteLine("Digite o número de série do item que deseja modificar : ");
             string numItem = Console.ReadLine();
@@ -98,38 +97,169 @@ namespace DesafioJP.ConsoleApp
                     if (numSerie != "0")
                         equipamento[i][2] = numSerie;
                     if (data != "0")
-                        equipamento[i][3] = numSerie;
+                        equipamento[i][3] = data;
                     if (fabricante != "0")
-                        equipamento[i][4] = numSerie;
+                        equipamento[i][4] = fabricante;
                     Console.WriteLine("Status atual do Equipamento : ");
                     Console.WriteLine("\tEquipamento {0} : {1} preço {2} nºsérie {3}  data {4} " +
                     "fabricante {5}", 
                     i, equipamento[i][0], equipamento[i][1], equipamento[i][2], equipamento[i][3], 
                     equipamento[i][4]);
-                    return;
+                    return true;
                 }
             }
-
+            Console.WriteLine("Impossível editar!!\tO item não está na lista\n");
+            return false;
         }
-        static string[][] excluirEquipamento(ref string[][] equipamento, ref int registrados)
+        static bool excluirEquipamento(ref string[][] equipamento, ref string[][] manutencao, 
+            ref int registrados)
         {
             Console.WriteLine("Digite o número de série do item que deseja deletar : ");
             string numItem = Console.ReadLine();
             string[][] copia = new string[5][]{ new string[1000], new string[1000],
             new string[1000], new string[1000], new string[1000]};
-
+            string nomeEquipamento = "";
+            int posicaoEquipamento = -1;
             for (int i = 0; i < registrados; i++)
             {
-                if (equipamento[i][2] != numItem)
+                if (equipamento[i][2] != numItem)                
                     copia[i] = equipamento[i];
+                else
+                {
+                    nomeEquipamento = equipamento[i][0];
+                    posicaoEquipamento = i;
+                }
+                if (nomeEquipamento == manutencao[i][2])
+                {
+                    Console.WriteLine("ERRO!! o item está atribuido a um item na lista de Manutenção\n");
+                    return false;
+                }
             }
-            return copia;
+            if (posicaoEquipamento == -1)
+            {
+                Console.WriteLine("Impossível excluir!!\tO item não está na lista\n");
+                return false;
+            }
+            for (int i = 0; i < posicaoEquipamento; i++)
+            {
+                if (nomeEquipamento == manutencao[i][2])
+                {
+                    Console.WriteLine("ERRO!! o item está atribuido a um item na lista de Manutenção\n");
+                    return false;
+                }
+            }
+            equipamento = copia;
+            Console.WriteLine("Item excluído com Sucesso!!\n");
+            return true;
         }
+        #endregion
+
+        #region manutencao
+        static bool registrarManutencao(ref string[][] manutencao, ref int registrados)
+        {
+            if (registrados < 1000)
+            {
+                Console.WriteLine("Digite o título do chamado");
+                manutencao[registrados][0] = Console.ReadLine();
+                Console.WriteLine("Digite a descrição do chamado : ");
+                manutencao[registrados][1] = Console.ReadLine();
+                Console.WriteLine("Digite o equipamento associado a ele : ");
+                manutencao[registrados][2] = Console.ReadLine();
+                Console.WriteLine("Digite a data de abertura do chamado: ");
+                manutencao[registrados][3] = Console.ReadLine();
+                registrados++;
+                return true;
+            }
+            return false;
+        }
+        static void visualizarManutencao(ref string[][] manutencao, ref int registrados)
+        {
+            int totaldias;
+            for (int i = 0; i < registrados; i++)
+            {
+            int diahoje = int.Parse(DateTime.Now.ToString().Substring(0, 2));
+            int meshoje = int.Parse(DateTime.Now.ToString().Substring(3, 2));
+            int anohoje = int.Parse(DateTime.Now.ToString().Substring(6, 4));
+
+            int diaDataAbertura = int.Parse(manutencao[i][3].Substring(0, 2));
+            int mesDataAbertura = int.Parse(manutencao[i][3].Substring(3, 2));
+            int anoDataAbertura = int.Parse(manutencao[i][3].Substring(6, 4));
+            totaldias = diahoje - diaDataAbertura + (meshoje - mesDataAbertura) * 30 +
+                (anohoje - anoDataAbertura) * 365;
+                Console.WriteLine("Chamado {0} : {1} equipamento {2} data de abertura {3}" +
+                " nº dias {4}", i + 1, manutencao[i][0], manutencao[i][1], manutencao[i][3], totaldias);
+            }
+        }
+        static bool editarManutencao(ref string[][] manutencao, ref int registrados)
+        {
+            Console.WriteLine("Digite o número de série do item que deseja modificar : ");
+            string numItem = Console.ReadLine();
+            for (int i = 0; i < registrados; i++)
+            {
+                if (manutencao[i][2] == numItem)
+                {
+                    Console.WriteLine("Digite um novo título para o chamado : (OBS) : 0 para pular");
+                    string titulo = Console.ReadLine();
+                    Console.WriteLine("Digite uma nova descrição para o chamado : (OBS) : 0 para pular");
+                    string descricao = Console.ReadLine();
+                    Console.WriteLine("Digite um novo equipamento para o chamado: (OBS) : 0 para pular");
+                    string equipamento = Console.ReadLine();
+                    Console.WriteLine("Digite uma nova data de abertura para o chamado: (OBS) : 0 para pular");
+                    string data = Console.ReadLine();
+                    if (titulo != "0")
+                        manutencao[i][0] = titulo;
+                    if (descricao != "0")
+                        manutencao[i][1] = descricao;
+                    if (equipamento != "0")
+                        manutencao[i][2] = equipamento;
+                    if (data != "0")
+                        manutencao[i][3] = equipamento;
+                    Console.WriteLine("Status atual do Chamado : ");
+                    Console.WriteLine("\tChamado {0} : {1} descrição {2} equipamento {3}  data {4} ",
+                    i + 1, manutencao[i][0], manutencao[i][1], manutencao[i][2], manutencao[i][3],
+                    manutencao[i][4]);
+                    return true;
+                }
+            }
+            Console.WriteLine("Impossível editar!!\tO item não está na lista\n");
+            return false;
+
+        }
+        static bool excluirManutencao(ref string[][] manutencao, ref int registrados)
+        {
+            Console.WriteLine("Digite o equipamento do chamado que deseja deletar : ");
+            string equipamento = Console.ReadLine();
+            string[][] copia = new string[5][]{ new string[1000], new string[1000],
+            new string[1000], new string[1000], new string[1000]};
+            int posicaoEquipamento = -1;
+            for (int i = 0; i < registrados; i++)
+            {
+                if (manutencao[i][2] != equipamento)
+                    copia[i] = manutencao[i];
+                else
+                    posicaoEquipamento = i;
+            }
+            if (posicaoEquipamento == -1)
+            {
+                Console.WriteLine("Impossível excluir!!\tO item não está na lista\n");
+                return false;
+            }
+            manutencao = copia;
+            Console.WriteLine("Item excluído com Sucesso!!\n");
+            return true;
+        }
+        #endregion
         static void Main(string[] args)
         {
             // nome 0 preço 1 nº série 2 data fabricação 3 fabricante 4;
+            // titulo 0 descrição 1 equipamento 2 data 3
+            string[][] equipamento = new string[1000][];
+            string[][] manutencao = new string [1000][];
+            for (int i = 0; i < 1000; i++)
+            { equipamento[i] = new string[5]; manutencao[i] = new string[5];}
+            int equipamentoRegistrado = 0, manutencaoRegistrado = 0;
             string menu;
-            int opcao, opcaoEquipamento, manutencao;
+            int opcao, opcaoEquipamento, opcaoManutencao;
             while (true)
             {
                 Console.WriteLine("Digite 1 para entrar no Menu De Equipamentos\nDigite 2 para entrar no" +
@@ -142,17 +272,25 @@ namespace DesafioJP.ConsoleApp
                 {
                     opcaoEquipamento = menuEquipamento();
                     if (opcaoEquipamento == 1)
-                        registrarEquipamento(ref equipamento, ref registrados);
+                        registrarEquipamento(ref equipamento, ref equipamentoRegistrado);
                     else if (opcaoEquipamento == 2)
-                        visualizarEquipamento(ref equipamento, ref registrados);
+                        visualizarEquipamento(ref equipamento, ref equipamentoRegistrado);
                     else if (opcaoEquipamento == 3)
-                        editarEquipamento(ref equipamento);
+                        editarEquipamento(ref equipamento, ref equipamentoRegistrado);
                     else if (opcaoEquipamento == 4)
-                        equipamento = excluirEquipamento(ref equipamento, ref registrados);
+                        excluirEquipamento(ref equipamento, ref manutencao, ref equipamentoRegistrado);
                 }
                 else if (opcao == 2)
                 {
-                    manutencao = menuManutencao();
+                    opcaoManutencao = menuManutencao();
+                    if (opcaoManutencao == 1)
+                        registrarManutencao(ref manutencao, ref manutencaoRegistrado);
+                    else if (opcaoManutencao == 2)
+                        visualizarManutencao(ref manutencao, ref manutencaoRegistrado);
+                    else if (opcaoManutencao == 3)
+                        editarManutencao(ref manutencao, ref manutencaoRegistrado);
+                    else if (opcaoManutencao == 4)
+                        excluirManutencao(ref manutencao, ref manutencaoRegistrado);
                 }
                 opcao = 0;
             }
