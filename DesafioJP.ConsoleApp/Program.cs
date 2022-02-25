@@ -4,8 +4,8 @@ namespace DesafioJP.ConsoleApp
 {
     internal class Program
     {
-        // 0 nome 1 preço 2 nº série 3 data fabricação 4 fabricante;
-        // titulo 0 descrição 1 equipamento 2 data 3
+        // equipamento = nome 0 | preço 1 | nº série 2 | data fabricação 3 | fabricante 4;
+        // manutenção = titulo 0 | descrição 1 | equipamento 2 | data 3
         static int menuEquipamento()
         {
             Console.WriteLine("Digite 1 para registrar um equipamento\nDigite 2 para visualizar um" +
@@ -21,7 +21,7 @@ namespace DesafioJP.ConsoleApp
         static int menuManutencao()
         {
             Console.WriteLine("Digite 1 para registrar um chamado\nDigite 2 para visualizar um" +
-            "chamado\nDigite 3 para editar um chamado\nDigite 4 para excluir um chamado ");
+            " chamado\nDigite 3 para editar um chamado\nDigite 4 para excluir um chamado ");
             int.TryParse(Console.ReadLine(), out int comando);
 
             if (comando == 1 || comando == 2 || comando == 3 || comando == 4)
@@ -71,6 +71,7 @@ namespace DesafioJP.ConsoleApp
                 Console.WriteLine("Equipamento {0} : {1} nºsérie {2} fabricante {3}", i + 1,
                 equipamento[i][0], equipamento[i][2], equipamento[i][4]);
             }
+            Console.WriteLine();
         }        
         static bool editarEquipamento(ref string[][] equipamento, ref int registrados)
         {
@@ -116,8 +117,9 @@ namespace DesafioJP.ConsoleApp
         {
             Console.WriteLine("Digite o número de série do item que deseja deletar : ");
             string numItem = Console.ReadLine();
-            string[][] copia = new string[5][]{ new string[1000], new string[1000],
-            new string[1000], new string[1000], new string[1000]};
+            string[][] copia = new string[1000][];
+            for (int i = 0; i < 1000; i++)
+                copia[i] = new string[5];
             string nomeEquipamento = "";
             int posicaoEquipamento = -1;
             for (int i = 0; i < registrados; i++)
@@ -150,6 +152,7 @@ namespace DesafioJP.ConsoleApp
             }
             equipamento = copia;
             Console.WriteLine("Item excluído com Sucesso!!\n");
+            registrados--;
             return true;
         }
         #endregion
@@ -189,10 +192,11 @@ namespace DesafioJP.ConsoleApp
                 Console.WriteLine("Chamado {0} : {1} equipamento {2} data de abertura {3}" +
                 " nº dias {4}", i + 1, manutencao[i][0], manutencao[i][1], manutencao[i][3], totaldias);
             }
+            Console.WriteLine();
         }
         static bool editarManutencao(ref string[][] manutencao, ref int registrados)
         {
-            Console.WriteLine("Digite o número de série do item que deseja modificar : ");
+            Console.WriteLine("Digite o nome do equipamento do chamado que deseja modificar : ");
             string numItem = Console.ReadLine();
             for (int i = 0; i < registrados; i++)
             {
@@ -227,10 +231,11 @@ namespace DesafioJP.ConsoleApp
         }
         static bool excluirManutencao(ref string[][] manutencao, ref int registrados)
         {
-            Console.WriteLine("Digite o equipamento do chamado que deseja deletar : ");
+            Console.WriteLine("Digite o nome do equipamento do chamado que deseja deletar : ");
             string equipamento = Console.ReadLine();
-            string[][] copia = new string[5][]{ new string[1000], new string[1000],
-            new string[1000], new string[1000], new string[1000]};
+            string[][] copia = new string[1000][];
+            for (int i = 0; i < 1000; i++)
+                copia[i] = new string[4]; 
             int posicaoEquipamento = -1;
             for (int i = 0; i < registrados; i++)
             {
@@ -246,13 +251,14 @@ namespace DesafioJP.ConsoleApp
             }
             manutencao = copia;
             Console.WriteLine("Item excluído com Sucesso!!\n");
+            registrados--;
             return true;
         }
         #endregion
         static void Main(string[] args)
         {
-            // nome 0 preço 1 nº série 2 data fabricação 3 fabricante 4;
-            // titulo 0 descrição 1 equipamento 2 data 3
+            // equipamento = nome 0 | preço 1 | nº série 2 | data fabricação 3 | fabricante 4;
+            // manutenção = titulo 0 | descrição 1 | equipamento 2 | data 3
             string[][] equipamento = new string[1000][];
             string[][] manutencao = new string [1000][];
             for (int i = 0; i < 1000; i++)
@@ -263,7 +269,7 @@ namespace DesafioJP.ConsoleApp
             while (true)
             {
                 Console.WriteLine("Digite 1 para entrar no Menu De Equipamentos\nDigite 2 para entrar no" +
-                    " Menu de Manutenção\nDigite s para Sair");
+                    " Menu de Manutenção\nDigite 3 para limpar o Console\nDigite s para Sair");
                 menu = Console.ReadLine();
                 if (menu.ToLower().Equals("s"))
                     break;
@@ -292,6 +298,8 @@ namespace DesafioJP.ConsoleApp
                     else if (opcaoManutencao == 4)
                         excluirManutencao(ref manutencao, ref manutencaoRegistrado);
                 }
+                else if (opcao == 3)
+                    Console.Clear();
                 opcao = 0;
             }
         }
