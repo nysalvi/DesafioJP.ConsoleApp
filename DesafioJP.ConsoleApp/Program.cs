@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Globalization;
 namespace DesafioJP.ConsoleApp
 {
     internal class Program
@@ -58,8 +58,13 @@ namespace DesafioJP.ConsoleApp
                 equipamento[registrados][2] = Console.ReadLine();
                 Console.WriteLine("Digite o número de série : ");
                 equipamento[registrados][3] = Console.ReadLine();
-                Console.WriteLine("Digite a data de fabricação : ");
-                equipamento[registrados][4] = Console.ReadLine();
+                while (true)
+                {
+                    Console.WriteLine("Digite a data de fabricação : ");
+                    equipamento[registrados][4] = Console.ReadLine();                    
+                    if (DateTime.TryParse(equipamento[registrados][4], out DateTime c))
+                        break;
+                }
                 Console.WriteLine("Digite o nome da fabricante : ");
                 equipamento[registrados][5] = Console.ReadLine();
                 registrados++;
@@ -74,7 +79,7 @@ namespace DesafioJP.ConsoleApp
             Console.Clear();
             for (int i = 0; i < registrados; i++)
             {
-                Console.WriteLine("ID {0} - {1} :\tnºsérie {2}\tfabricante {4}", 
+                Console.WriteLine("ID {0} - {1} :\tnºsérie {2}\tfabricante {3}", 
                     equipamento[i][0], equipamento[i][1], equipamento[i][3], equipamento[i][5]);
             }
             Console.WriteLine();
@@ -94,8 +99,14 @@ namespace DesafioJP.ConsoleApp
                     string preço = Console.ReadLine();
                     Console.WriteLine("Digite um novo nº série para o equipamento : (OBS) : 0 para pular");
                     string numSerie = Console.ReadLine();
-                    Console.WriteLine("Digite uma nova data para o equipamento : (OBS) : 0 para pular");
-                    string data = Console.ReadLine();
+                    string data;
+                    while (true)
+                    {
+                        Console.WriteLine("Digite uma nova data para o equipamento : (OBS) : 0 para pular");
+                        data = Console.ReadLine();
+                        if (data == "0" || DateTime.TryParse(data, out DateTime c))
+                            break;
+                    }
                     Console.WriteLine("Digite um novo fabricante para o equipamento : (OBS) : 0 para pular");
                     string fabricante = Console.ReadLine();
                     if (nome != "0")
@@ -189,8 +200,7 @@ namespace DesafioJP.ConsoleApp
             Console.Clear();
             for (int i = 0; i < registrados; i++)
             {            
-                dias = (DateTime.Now - DateTime.Parse(manutencao[i][3])).Days;
-
+                dias = (DateTime.Now - DateTime.Parse(manutencao[i][4], CultureInfo.CurrentCulture)).Days;
                 Console.WriteLine("ID {0} - {1}: \n\tequipamento {2} \n\tdata de abertura {3}" +
                 " \n\tnº dias {4}", manutencao[i][0], manutencao[i][1], manutencao[i][3],
                 manutencao[i][4], dias);
@@ -212,8 +222,14 @@ namespace DesafioJP.ConsoleApp
                     string descricao = Console.ReadLine();
                     Console.WriteLine("Digite um novo equipamento para o chamado: (OBS) : 0 para pular");
                     string equipamento = Console.ReadLine();
-                    Console.WriteLine("Digite uma nova data de abertura para o chamado: (OBS) : 0 para pular");
-                    string data = Console.ReadLine();
+                    string data;
+                    while (true)
+                    {
+                        Console.WriteLine("Digite uma nova data de abertura para o chamado: (OBS) : 0 para pular");
+                        data = Console.ReadLine();
+                        if (data == "0" || DateTime.TryParse(data, out DateTime c))
+                            break;
+                    }
                     if (titulo != "0")
                         manutencao[i][1] = titulo;
                     if (descricao != "0")
